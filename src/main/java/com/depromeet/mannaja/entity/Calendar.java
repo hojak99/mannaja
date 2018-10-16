@@ -35,8 +35,7 @@ public class Calendar {
     @Column(name = "modifiedAt")
     private LocalDateTime modifiedAt;
 
-    @BatchSize(size = 15)
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "calendarId")
     private List<Schedule> scheduleList;
 
