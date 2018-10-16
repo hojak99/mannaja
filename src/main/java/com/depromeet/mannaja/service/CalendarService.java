@@ -1,4 +1,4 @@
-package com.depromeet.mannaja.service.calendar;
+package com.depromeet.mannaja.service;
 
 import com.depromeet.mannaja.controller.request.CalendarRequest;
 import com.depromeet.mannaja.entity.Calendar;

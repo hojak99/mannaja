@@ -2,6 +2,7 @@ package com.depromeet.mannaja.entity;
 
 import com.depromeet.mannaja.controller.request.CalendarRequest;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Table(name = "calendar")
@@ -32,6 +34,11 @@ public class Calendar {
     @LastModifiedDate
     @Column(name = "modifiedAt")
     private LocalDateTime modifiedAt;
+
+    @BatchSize(size = 15)
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendarId")
+    private List<Schedule> scheduleList;
 
     public static Calendar from(CalendarRequest request) {
         return Calendar

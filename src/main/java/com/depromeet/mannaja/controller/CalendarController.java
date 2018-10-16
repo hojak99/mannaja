@@ -1,14 +1,12 @@
 package com.depromeet.mannaja.controller;
 
 import com.depromeet.mannaja.controller.request.CalendarRequest;
-import com.depromeet.mannaja.service.calendar.CalendarService;
+import com.depromeet.mannaja.service.CalendarService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 @Controller
 public class CalendarController {
@@ -20,8 +18,9 @@ public class CalendarController {
 
     @GetMapping("/calendar/{id}")
     public void getCalendar(
-            @PathVariable("id") Long id) {
-        calendarService.retrieveCalendar(id);
+            @PathVariable("id") Long id,
+            @RequestParam(name = "yearMonth") LocalDate yearMonth) {
+        calendarService.retrieveCalendar(id, yearMonth);
     }
 
     @PostMapping("/calendar")
