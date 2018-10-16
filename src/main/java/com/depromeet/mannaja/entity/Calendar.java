@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -17,7 +18,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-@Builder
 public class Calendar {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,10 +40,21 @@ public class Calendar {
     private List<Schedule> scheduleList;
 
     public static Calendar from(CalendarRequest request) {
-        return Calendar
-                .builder()
-                .yearMonth(request.getYearMonth())
-                .memberId(request.getMemberId())
-                .build();
+        Calendar calendar = new Calendar();
+        calendar.yearMonth = request.getYearMonth();
+        calendar.memberId = request.getMemberId();
+
+        return calendar;
+    }
+
+    public static Calendar createEmptyScheduleList() {
+        Calendar calendar = new Calendar();
+        calendar.scheduleList = Collections.emptyList();
+
+        return calendar;
+    }
+
+    public boolean isIdNull() {
+        return id == null ? true : false;
     }
 }

@@ -22,17 +22,19 @@ public class CalendarService {
 
     public Calendar retrieveCalendar(Long memberId, LocalDate yearMonth) {
         Calendar calendar = calendarRepository.findByMemberIdAndYearMonth(memberId, yearMonth)
-                .orElseThrow(() -> new IllegalArgumentException("no calendar data (memberId :" + memberId + ")"));
+                .orElse(Calendar.createEmptyScheduleList());
 
         log.info("[CalendarService.retrieveCalendar] Success retrieve Calendar: {}", calendar);
         return calendar;
     }
 
-    public void createCalendar(CalendarRequest request) {
+    public Calendar createCalendar(CalendarRequest request) {
         Calendar calendar = Calendar.from(request);
         calendar = calendarRepository.save(calendar);
 
         log.info("[CalendarService.saveCalendar] Success save Calendar: {}", calendar);
+
+        return calendar;
     }
 
 

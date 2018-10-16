@@ -1,5 +1,6 @@
 package com.depromeet.mannaja.entity;
 
+import com.depromeet.mannaja.controller.request.ScheduleRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,6 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "schedule")
 @EntityListeners(AuditingEntityListener.class)
-@Builder
 public class Schedule {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,4 +38,14 @@ public class Schedule {
     @Column(name = "modifiedAt")
     private LocalDateTime modifiedAt;
 
+    public void changeIsScheduled() {
+        this.isScheduled = !this.isScheduled;
+    }
+
+    public static Schedule from(ScheduleRequest request){
+        Schedule schedule = new Schedule();
+        schedule.date = request.getDate();
+
+        return schedule;
+    }
 }
