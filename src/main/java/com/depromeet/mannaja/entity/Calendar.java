@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +26,7 @@ public class Calendar {
     private Long memberId;
 
     @Column(name = "yearMonth")
-    private LocalDateTime yearMonth;
+    private LocalDate yearMonth;
 
     @CreatedDate
     @LastModifiedDate
@@ -35,6 +36,7 @@ public class Calendar {
     public static Calendar from(CalendarRequest request) {
         return Calendar
                 .builder()
+                .yearMonth(request.getYearMonth())
                 .memberId(request.getMemberId())
                 .build();
     }

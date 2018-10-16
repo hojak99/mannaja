@@ -27,6 +27,6 @@ public class CalendarController {
     @PostMapping("/calendar")
     public void postCalendar(
             @Valid @RequestBody CalendarRequest request) {
-        calendarService.saveCalendar(request);
+        calendarService.createCalendar(request);
     }
 }
