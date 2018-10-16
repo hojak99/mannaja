@@ -1,0 +1,41 @@
+package com.depromeet.mannaja.entity;
+
+import com.depromeet.mannaja.controller.request.CalendarRequest;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Data
+@Table(name = "calendar")
+@Entity
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
+@Builder
+public class Calendar {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "member_id")
+    private Long memberId;
+
+    @Column(name = "yearMonth")
+    private LocalDateTime yearMonth;
+
+    @CreatedDate
+    @LastModifiedDate
+    @Column(name = "modifiedAt")
+    private LocalDateTime modifiedAt;
+
+    public static Calendar from(CalendarRequest request) {
+        return Calendar
+                .builder()
+                .memberId(request.getMemberId())
+                .build();
+    }
+}
