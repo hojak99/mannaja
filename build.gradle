@@ -32,5 +32,6 @@ dependencies {
     runtimeOnly('mysql:mysql-connector-java')
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
     compileOnly('org.projectlombok:lombok')
+    compile "com.querydsl:querydsl-jpa:4.1.4"
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
