@@ -26,7 +26,7 @@ public class ScheduleService {
     public Schedule retrieveSchedule(Long memberId, ScheduleRequest request) {
         Calendar calendar = calendarService.retrieveCalendar(memberId, request.getYearMonth());
 
-        if(calendar.isIdNull()) {
+        if (calendar.isIdNull()) {
             createCalendar(calendar, memberId, request);
         }
 
