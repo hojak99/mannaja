@@ -26,11 +26,8 @@ public class Schedule {
     @Column(name = "calendar_id")
     private Long calendarId;
 
-    @Column(name = "date_time")
-    private LocalTime dateTime;
-
-    @Column(name = "day")
-    private String day;
+    @Column(name = "date")
+    private String date;
 
     @Column(name = "is_scheduled")
     private boolean isScheduled;
@@ -46,7 +43,7 @@ public class Schedule {
 
     public static Schedule create(ScheduleRequest request){
         Schedule schedule = new Schedule();
-        schedule.dateTime = request.getDate();
+        schedule.date = request.getDate();
 
         return schedule;
     }

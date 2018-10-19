@@ -7,5 +7,5 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    Optional<Schedule> findByCalendarIdAndDateTime(Long calendarId, LocalTime date);
+    Optional<Schedule> findByCalendarIdAndDate(Long calendarId, String date);
 }

@@ -10,7 +10,6 @@ import java.time.LocalTime;
 @Data
 @Builder
 public class ScheduleRequest {
-    private LocalDate yearMonth;
-    private LocalTime date;
+    private String date;
     private Long calendarId;
 }
