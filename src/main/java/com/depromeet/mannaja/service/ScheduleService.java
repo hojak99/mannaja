@@ -8,7 +8,9 @@ import com.depromeet.mannaja.repository.ScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -23,42 +25,64 @@ public class ScheduleService {
         this.calendarService = calendarService;
     }
 
-    public Schedule retrieveSchedule(Long memberId, ScheduleRequest request) {
-        Calendar calendar = calendarService.retrieveCalendar(memberId, request.getYearMonth());
-
-        if (calendar.isIdNull()) {
-            createCalendar(calendar, memberId, request);
-        }
-
-        request.setCalendarId(calendar.getId());
-
-        Schedule schedule = findByCalenedarIdAndDate(request);
+    public Schedule retrieveSchedule(Long memberId, LocalDate date) {
+        Calendar calendar = checkExistCalendar(memberId, date);
+        Schedule schedule = findByCalenedarIdAndDate(calendar.getId(), date);
 
         log.info("[ScheduleService.changeIsScheduled] Success retrieve schedule : {}", schedule);
         return schedule;
     }
 
-    private Schedule findByCalenedarIdAndDate(ScheduleRequest request) {
-        return scheduleRepository.findByCalendarIdAndDate(request.getCalendarId(), request.getDate())
-                .orElse(createSchedule(request));
+    private Calendar checkExistCalendar(Long memberId, LocalDate date) {
+        CalendarRequest request = CalendarRequest.builder()
+                .memberId(memberId)
+                .yearMonth(convertYearMonth(date))
+                .build();
+
+        return calendarService.checkExistCalendar(request);
     }
 
-    private Schedule createSchedule(ScheduleRequest request) {
-        Schedule schedule = Schedule.from(request);
-        return scheduleRepository.save(schedule);
+    private String convertYearMonth(LocalDate localDate) {
+        return localDate.getYear() + "-" + localDate.getMonthValue();
     }
 
-    public void updateIsScheduled(Long memberId, ScheduleRequest request) {
-        Schedule schedule = retrieveSchedule(memberId, request);
+    private Schedule findByCalenedarIdAndDate(Long calendarId, LocalDate date) {
+        String day = String.valueOf(date.getDayOfMonth());
+
+        return scheduleRepository.findByCalendarIdAndDate(calendarId, day)
+                .orElseThrow(() -> new IllegalArgumentException("no schedule data. day: " + day));
+    }
+
+    public void updateIsScheduled(Long memberId, LocalDate date) {
+        Schedule schedule = checkExistScheduleData(memberId, date);
+
         schedule.changeIsScheduled();
-
         schedule = scheduleRepository.save(schedule);
+
         log.info("[ScheduleService.updateIsScheduled] Success change schedule : {}", schedule);
     }
 
-    private Calendar createCalendar(Calendar calendar, Long memberId, ScheduleRequest request) {
-        CalendarRequest calendarRequest = new CalendarRequest(request.getYearMonth(), memberId);
-        calendar = calendarService.createCalendar(calendarRequest);
-        return calendar;
+    private Schedule checkExistScheduleData(Long memberId, LocalDate date) {
+        try {
+            Schedule schedule = retrieveSchedule(memberId, date);
+            return schedule;
+        } catch (IllegalArgumentException e) {
+            Calendar calendar = checkExistCalendar(memberId, date);
+
+            ScheduleRequest request = ScheduleRequest
+                    .builder()
+                    .calendarId(calendar.getId())
+                    .scheduleDate(date)
+                    .build();
+
+            Schedule schedule = createSchedule(request);
+            log.info("[ScheduleService.checkExistScheduleData] create schedule data, because no schedule data : {}", schedule);
+            return schedule;
+        }
+    }
+
+    private Schedule createSchedule(ScheduleRequest request) {
+        Schedule schedule = Schedule.create(request);
+        return scheduleRepository.save(schedule);
     }
 }
