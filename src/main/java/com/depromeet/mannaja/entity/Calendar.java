@@ -2,7 +2,6 @@ package com.depromeet.mannaja.entity;
 
 import com.depromeet.mannaja.controller.request.CalendarRequest;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,6 +19,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Calendar {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
@@ -28,18 +28,18 @@ public class Calendar {
     private Long memberId;
 
     @Column(name = "yearMonth")
-    private LocalDate yearMonth;
+    private String yearMonth;
 
     @CreatedDate
     @LastModifiedDate
     @Column(name = "modifiedAt")
     private LocalDateTime modifiedAt;
 
-    @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "calendarId")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
     private List<Schedule> scheduleList;
 
-    public static Calendar from(CalendarRequest request) {
+    public static Calendar create(CalendarRequest request) {
         Calendar calendar = new Calendar();
         calendar.yearMonth = request.getYearMonth();
         calendar.memberId = request.getMemberId();
@@ -47,8 +47,9 @@ public class Calendar {
         return calendar;
     }
 
-    public static Calendar createEmptyScheduleList() {
+    public static Calendar createEmptyScheduleList(Long memberId) {
         Calendar calendar = new Calendar();
+        calendar.memberId = memberId;
         calendar.scheduleList = Collections.emptyList();
 
         return calendar;

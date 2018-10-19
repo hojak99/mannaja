@@ -8,5 +8,5 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
-    Optional<Calendar> findByMemberIdAndYearMonth(Long memberId, LocalDate localDate);
+    Optional<Calendar> findByMemberIdAndYearMonth(Long memberId, String yearMonth);
 }

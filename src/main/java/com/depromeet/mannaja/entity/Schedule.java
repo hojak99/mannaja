@@ -2,7 +2,6 @@ package com.depromeet.mannaja.entity;
 
 import com.depromeet.mannaja.controller.request.ScheduleRequest;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,13 +23,16 @@ public class Schedule {
     @Id
     private Long id;
 
-    @Column(name = "calendarId")
+    @Column(name = "calendar_id")
     private Long calendarId;
 
-    @Column(name = "date")
-    private LocalTime date;
+    @Column(name = "date_time")
+    private LocalTime dateTime;
 
-    @Column(name = "isScheduled")
+    @Column(name = "day")
+    private String day;
+
+    @Column(name = "is_scheduled")
     private boolean isScheduled;
 
     @CreatedDate
@@ -42,9 +44,9 @@ public class Schedule {
         this.isScheduled = !this.isScheduled;
     }
 
-    public static Schedule from(ScheduleRequest request){
+    public static Schedule create(ScheduleRequest request){
         Schedule schedule = new Schedule();
-        schedule.date = request.getDate();
+        schedule.dateTime = request.getDate();
 
         return schedule;
     }
