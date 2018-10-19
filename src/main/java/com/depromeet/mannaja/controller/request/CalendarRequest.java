@@ -1,16 +1,18 @@
 package com.depromeet.mannaja.controller.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class CalendarRequest {
 
-    private LocalDate yearMonth;
+    @NotNull
+    private String yearMonth;
 
     @NotNull
     private Long memberId;

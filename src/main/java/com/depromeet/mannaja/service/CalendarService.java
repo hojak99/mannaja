@@ -26,14 +26,18 @@ public class CalendarService {
         return calendar;
     }
 
-    public Calendar createCalendar(CalendarRequest request) {
-        Calendar calendar = Calendar.create(request);
-        calendar = calendarRepository.save(calendar);
-
-        log.info("[CalendarService.saveCalendar] Success save Calendar: {}", calendar);
+    public Calendar checkExistCalendar(CalendarRequest request) {
+        Calendar calendar = calendarRepository.findByMemberIdAndYearMonth(request.getMemberId(), request.getYearMonth())
+                .orElseGet(() -> createCalendar(request));
 
         return calendar;
     }
 
+    private Calendar createCalendar(CalendarRequest request) {
+        Calendar calendar = Calendar.create(request);
+        calendar = calendarRepository.save(calendar);
 
+        log.info("[CalendarService.saveCalendar] Success save Calendar: {}", calendar);
+        return calendar;
+    }
 }
