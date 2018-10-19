@@ -20,7 +20,7 @@ public class CalendarService {
 
     public Calendar retrieveCalendar(Long memberId, String yearMonth) {
         Calendar calendar = calendarRepository.findByMemberIdAndYearMonth(memberId, yearMonth)
-                .orElse(Calendar.createEmptyScheduleList(memberId));
+                .orElse(Calendar.createEmptyScheduleList(yearMonth));
 
         log.info("[CalendarService.retrieveCalendar] Success retrieve Calendar: {}", calendar);
         return calendar;

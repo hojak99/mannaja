@@ -47,9 +47,9 @@ public class Calendar {
         return calendar;
     }
 
-    public static Calendar createEmptyScheduleList(Long memberId) {
+    public static Calendar createEmptyScheduleList(String yearMonth) {
         Calendar calendar = new Calendar();
-        calendar.memberId = memberId;
+        calendar.yearMonth = yearMonth;
         calendar.scheduleList = Collections.emptyList();
 
         return calendar;
