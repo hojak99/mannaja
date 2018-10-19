@@ -43,11 +43,11 @@ public class ScheduleService {
     }
 
     private String convertYearMonth(LocalDate localDate) {
-        return localDate.getYear() + "-" + localDate.getMonthValue();
+        return localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
     }
 
     private Schedule findByCalenedarIdAndDate(Long calendarId, LocalDate date) {
-        String day = String.valueOf(date.getDayOfMonth());
+        String day = String.format("%02d", date.getDayOfMonth());
 
         return scheduleRepository.findByCalendarIdAndDate(calendarId, day)
                 .orElseThrow(() -> new IllegalArgumentException("no schedule data. day: " + day));
