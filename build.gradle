@@ -28,10 +28,12 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.flywaydb:flyway-core')
+//    implementation('org.flywaydb:flyway-core')
     runtimeOnly('mysql:mysql-connector-java')
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
     compileOnly('org.projectlombok:lombok')
     compile "com.querydsl:querydsl-jpa:4.1.4"
+    compile('io.springfox:springfox-swagger2:2.9.2')
+    compile('io.springfox:springfox-swagger-ui:2.9.2')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
