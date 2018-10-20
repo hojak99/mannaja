@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,20 +25,21 @@ public class ScheduleService {
         this.calendarService = calendarService;
     }
 
-    public Schedule retrieveSchedule(Long memberId, LocalDate date) {
-        Calendar calendar = checkExistCalendar(memberId, date);
-        Schedule schedule = findByCalenedarIdAndDate(calendar.getId(), date);
+    public List<Schedule> retrieveScheduleList(Long memberId, List<LocalDate> dateList) {
+        Calendar calendar = checkExistCalendar(memberId, dateList);
+        List<Schedule> scheduleList = findByCalenedarIdAndDate(calendar.getId(), dateList);
 
-        log.info("[ScheduleService.changeIsScheduled] Success retrieve schedule : {}", schedule);
-        return schedule;
+        log.info("[ScheduleService.changeIsScheduled] Success retrieve schedule : {}", scheduleList);
+        return scheduleList;
     }
 
-    private Calendar checkExistCalendar(Long memberId, LocalDate date) {
+    private Calendar checkExistCalendar(Long memberId, List<LocalDate> dateList) {
         CalendarRequest request = CalendarRequest.builder()
                 .memberId(memberId)
-                .yearMonth(convertYearMonth(date))
+                .yearMonth(convertYearMonth(dateList.get(0)))
                 .build();
 
+        log.info("{}", request);
         return calendarService.checkExistCalendar(request);
     }
 
@@ -46,43 +47,56 @@ public class ScheduleService {
         return localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
     }
 
-    private Schedule findByCalenedarIdAndDate(Long calendarId, LocalDate date) {
-        String day = String.format("%02d", date.getDayOfMonth());
+    private List<Schedule> findByCalenedarIdAndDate(Long calendarId, List<LocalDate> dateList) {
 
-        return scheduleRepository.findByCalendarIdAndDate(calendarId, day)
-                .orElseThrow(() -> new IllegalArgumentException("no schedule data. day: " + day));
+        List<String> dayList = new ArrayList<>();
+        dateList.forEach(localDate -> {
+            dayList.add(String.format("%02d", localDate.getDayOfMonth()));
+        });
+
+        return scheduleRepository.findAllByCalendarIdAndDateIn(calendarId, dayList)
+                .orElseThrow(() -> new IllegalArgumentException("no schedule data. day: " + dayList));
     }
 
-    public void updateIsScheduled(Long memberId, LocalDate date) {
-        Schedule schedule = checkExistScheduleData(memberId, date);
+    public void updateIsScheduled(Long memberId, List<LocalDate> date) {
+        List<Schedule> scheduleList = checkExistScheduleData(memberId, date);
 
-        schedule.changeIsScheduled();
-        schedule = scheduleRepository.save(schedule);
+        scheduleList.stream().forEach(schedule -> schedule.changeIsScheduled());
+        scheduleList = scheduleRepository.saveAll(scheduleList);
 
-        log.info("[ScheduleService.updateIsScheduled] Success change schedule : {}", schedule);
+        log.info("[ScheduleService.updateIsScheduled] Success change schedule : {}", scheduleList);
     }
 
-    private Schedule checkExistScheduleData(Long memberId, LocalDate date) {
+    private List<Schedule> checkExistScheduleData(Long memberId, List<LocalDate> dateList) {
         try {
-            Schedule schedule = retrieveSchedule(memberId, date);
-            return schedule;
+            List<Schedule> scheduleList = retrieveScheduleList(memberId, dateList);
+            return scheduleList;
         } catch (IllegalArgumentException e) {
-            Calendar calendar = checkExistCalendar(memberId, date);
+            Calendar calendar = checkExistCalendar(memberId, dateList);
 
-            ScheduleRequest request = ScheduleRequest
-                    .builder()
-                    .calendarId(calendar.getId())
-                    .scheduleDate(date)
-                    .build();
+            List<ScheduleRequest> requestList = new ArrayList<>();
 
-            Schedule schedule = createSchedule(request);
-            log.info("[ScheduleService.checkExistScheduleData] create schedule data, because no schedule data : {}", schedule);
-            return schedule;
+            dateList.stream().forEach(localDate -> {
+                ScheduleRequest request = ScheduleRequest
+                        .builder()
+                        .calendarId(calendar.getId())
+                        .scheduleDate(localDate)
+                        .build();
+
+                requestList.add(request);
+            });
+
+            List<Schedule> scheduleList = createSchedule(requestList);
+            log.info("[ScheduleService.checkExistScheduleData] create schedule data, because no schedule data : {}", scheduleList);
+            return scheduleList;
         }
     }
 
-    private Schedule createSchedule(ScheduleRequest request) {
-        Schedule schedule = Schedule.create(request);
-        return scheduleRepository.save(schedule);
+    private List<Schedule> createSchedule(List<ScheduleRequest> requestList) {
+        List<Schedule> scheduleList = new ArrayList<>();
+        requestList.stream().forEach(request -> {
+            scheduleList.add(Schedule.create(request));
+        });
+        return scheduleRepository.saveAll(scheduleList);
     }
 }

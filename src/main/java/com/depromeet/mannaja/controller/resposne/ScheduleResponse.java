@@ -1,12 +1,9 @@
 package com.depromeet.mannaja.controller.resposne;
 
 import com.depromeet.mannaja.entity.Schedule;
-import com.depromeet.mannaja.utils.DateUtils;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
 public class ScheduleResponse {
@@ -19,7 +16,7 @@ public class ScheduleResponse {
         ScheduleResponse response = new ScheduleResponse();
         response.memberId = schedule.getCalendar().getMemberId();
         response.id = schedule.getId();
-        response.date = DateUtils.convertDate(yearMonth, schedule.getDate());
+        response.date = LocalDate.parse(combineDate(yearMonth, schedule));
         response.isScheduled = schedule.isScheduled();
 
         return response;

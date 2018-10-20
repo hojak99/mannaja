@@ -5,11 +5,15 @@ import com.depromeet.mannaja.controller.resposne.ScheduleResponse;
 import com.depromeet.mannaja.entity.Schedule;
 import com.depromeet.mannaja.service.ScheduleService;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ScheduleController {
@@ -25,18 +29,23 @@ public class ScheduleController {
     @PatchMapping("/schedule/{memberId}")
     public void patchSchedule(
             @PathVariable(name = "memberId") Long memberId,
-            @RequestParam(name = "date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+            @RequestBody List<ScheduleRequest> scheduleRequestList) {
 
-        scheduleService.updateIsScheduled(memberId, date);
+        scheduleService.updateIsScheduled(memberId,
+                scheduleRequestList
+                        .stream()
+                        .map(request -> request.getScheduleDate()).collect(Collectors.toList()));
     }
 
     @ApiOperation(value = "자신의 특정 스케줄 조회", notes = "자신의 특정 스케줄을 조회함. `data` 는 `yyyy-MM-dd` 형태. 스케줄 존재하지 않을 시 exception 뱉음.")
     @GetMapping("/schedule/{memberId}")
-    public ScheduleResponse retrieveSchedule(
+    public List<ScheduleResponse> retrieveSchedule(
             @PathVariable(name = "memberId") Long memberId,
             @RequestParam(name = "date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
-        Schedule schedule = scheduleService.retrieveSchedule(memberId, date);
-        return ScheduleResponse.from(schedule.getCalendar().getYearMonth(), schedule);
+        List<Schedule> scheduleList = scheduleService.retrieveScheduleList(memberId, Arrays.asList(date));
+        return scheduleList
+                .stream()
+                .map(schedule -> ScheduleResponse.from(schedule.getCalendar().getYearMonth(), schedule)).collect(Collectors.toList());
     }
 }

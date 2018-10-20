@@ -32,7 +32,7 @@ public class Schedule {
     private String date;
 
     @Column(name = "is_scheduled")
-    private boolean isScheduled;
+    private boolean isScheduled = true;
 
     @CreatedDate
     @LastModifiedDate
