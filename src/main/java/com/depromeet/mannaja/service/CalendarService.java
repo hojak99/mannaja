@@ -27,7 +27,7 @@ public class CalendarService {
     }
 
     public Calendar checkExistCalendar(CalendarRequest request) {
-        Calendar calendar = calendarRepository.findByMemberIdAndYearMonth(request.getMemberId(), request.getYearMonth())
+        Calendar calendar = calendarRepository.findByMemberIdAndYearMonth(request.getMemberId(), request.getYearMonth().toString())
                 .orElseGet(() -> createCalendar(request));
 
         return calendar;

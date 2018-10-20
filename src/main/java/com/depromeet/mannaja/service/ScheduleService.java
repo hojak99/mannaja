@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +37,9 @@ public class ScheduleService {
     private Calendar checkExistCalendar(Long memberId, List<LocalDate> dateList) {
         CalendarRequest request = CalendarRequest.builder()
                 .memberId(memberId)
-                .yearMonth(convertYearMonth(dateList.get(0)))
+                .yearMonth(YearMonth.parse(convertYearMonth(dateList.get(0))))       // 어짜피 달만 알면 됨.
                 .build();
 
-        log.info("{}", request);
         return calendarService.checkExistCalendar(request);
     }
 

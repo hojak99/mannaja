@@ -43,7 +43,7 @@ public class Calendar {
 
     public static Calendar create(CalendarRequest request) {
         Calendar calendar = new Calendar();
-        calendar.yearMonth = request.getYearMonth();
+        calendar.yearMonth = request.getYearMonth().toString();
         calendar.memberId = request.getMemberId();
 
         return calendar;

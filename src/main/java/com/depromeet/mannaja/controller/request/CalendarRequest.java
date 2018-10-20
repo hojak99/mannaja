@@ -6,13 +6,14 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Data
 @Builder
 public class CalendarRequest {
 
     @NotNull
-    private String yearMonth;
+    private YearMonth yearMonth;
 
     @NotNull
     private Long memberId;
