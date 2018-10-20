@@ -5,10 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.time.YearMonth;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name="plan", schema = "mannaja")
@@ -23,6 +22,9 @@ public class Plan{
 
     private String name;
 
+    private String planYearMonth;
+
+    @Setter
     private LocalDate settleDate;
 
     private LocalDateTime modifiedAt;
@@ -35,8 +37,17 @@ public class Plan{
 
     public void addMember(Member member){
         memberList.add(member);
-//        Map<LocalDate,Integer> invalidMap = memberList.stream()
-//                .collect(Collectors.toMap())
-//TODO 캘린더생기면 업데이트
+    }
+
+    public void removeMember(Long memberId) {
+        for(Iterator<Member> it = memberList.iterator(); it.hasNext();){
+            Member member1 = it.next();
+            if(memberId.equals(member1.getId())){
+                it.remove();
+                break;
+            }
+        }
+
+
     }
 }
