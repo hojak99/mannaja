@@ -1,11 +1,13 @@
 package com.depromeet.mannaja.controller;
 
 import com.depromeet.mannaja.controller.request.CreatePlan;
+import com.depromeet.mannaja.controller.request.PlanRequest;
 import com.depromeet.mannaja.controller.resposne.PlanDetailResponse;
 import com.depromeet.mannaja.controller.resposne.PlanListResponse;
 import com.depromeet.mannaja.entity.Plan;
 import com.depromeet.mannaja.service.PlanDetail;
 import com.depromeet.mannaja.service.plan.PlanFinder;
+import com.depromeet.mannaja.service.plan.PlanModifier;
 import com.depromeet.mannaja.service.plan.PlanRegister;
 import com.depromeet.mannaja.service.plan.PlanRemover;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class PlanController {
     @Autowired
     private PlanRegister planRegister;
 
+    @Autowired
+    private PlanModifier planModifier;
+
     @GetMapping("/{planId}")
     public Plan getPlan(@PathVariable Long planId) {
         return planFinder.getPlan(planId);
@@ -45,6 +50,12 @@ public class PlanController {
     public PlanDetailResponse getPlanDetail(@PathVariable Long planId) {
         return PlanDetailResponse.from(planFinder.findPlanDetail(planId));
 
+    }
+
+    @PatchMapping("/")
+    public void setPlanSettleDate(
+            @RequestBody PlanRequest request) {
+        planModifier.setSettleDate(request);
     }
 
     @PostMapping("/create")
