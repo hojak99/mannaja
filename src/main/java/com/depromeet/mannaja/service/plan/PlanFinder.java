@@ -1,18 +1,75 @@
 package com.depromeet.mannaja.service.plan;
 
+import com.depromeet.mannaja.entity.Calendar;
+import com.depromeet.mannaja.entity.Member;
 import com.depromeet.mannaja.entity.Plan;
+import com.depromeet.mannaja.repository.CalendarRepository;
 import com.depromeet.mannaja.repository.PlanRepository;
+import com.depromeet.mannaja.service.PlanDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PlanFinder {
     @Autowired
+    PlanRegister planRegister;
+
+    @Autowired
+    CalendarRepository calendarRepository;
+
+    @Autowired
     PlanRepository planRepository;
 
-    public Optional<Plan> getPlan(Long planId){
-        return planRepository.findById(planId);
+    public Plan getPlan(Long planId){
+        return planRepository.findById(planId).get();
+    }
+
+    public PlanDetail findPlanDetail(Long planId){
+        Plan plan = getPlan(planId);
+        PlanDetail planDetail = PlanDetail.builder()
+                .plan(plan)
+                .allValidDate(getValidDateList(plan))
+                .dateMapByMemberId(getMemberMap(plan))
+                .build();
+
+        return planDetail;
+    }
+
+    private Map<Member,List<LocalDate>> getMemberMap(Plan plan){
+        Map<Member,List<LocalDate>> dateMapByMemeber = new HashMap<>();
+
+        for(Member member : plan.getMemberList()){
+            Optional<Calendar> calendar = calendarRepository.findByMemberIdAndYearMonth(member.getId(),plan.getPlanYearMonth());
+            if(calendar.isPresent()){
+                List<LocalDate> localDates = calendar.get().getScheduleList()
+                        .stream()
+                        .filter(schedule -> !schedule.isScheduled())
+                        .map((schedule -> YearMonth.parse(plan.getPlanYearMonth()).atDay(Integer.valueOf(schedule.getDate()))))
+                        .collect(Collectors.toList());
+                dateMapByMemeber.put(member,localDates);
+            }
+        }
+        return dateMapByMemeber;
+    }
+
+    private List<LocalDate> getValidDateList(Plan plan){
+        List<LocalDate> validDateList = new ArrayList<>();
+
+        Map<Long, Boolean> dateBooleanMap = planRegister.getDateBooleanMap(plan);
+
+        LocalDate startDate = YearMonth.parse(plan.getPlanYearMonth()).atDay(1);
+        LocalDate endDate = startDate.plusMonths(1);
+        while(!startDate.isAfter(endDate)){
+            if(dateBooleanMap.containsKey(startDate.getDayOfMonth())){
+                validDateList.add(startDate);
+            }
+            startDate = startDate.plusDays(1);
+        }
+        return validDateList;
     }
 }

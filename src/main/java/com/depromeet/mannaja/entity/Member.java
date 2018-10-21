@@ -30,4 +30,8 @@ public class Member {
             joinColumns = @JoinColumn(name = "planId"),
             inverseJoinColumns = @JoinColumn(name = "memberId"))
     private List<Plan> planList;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "memberId")
+    private List<Calendar> calendarList;
 }
