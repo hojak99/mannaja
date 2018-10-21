@@ -12,7 +12,8 @@ public class MemberFinder {
     @Autowired
     private MemberRepository memberRepository;
 
-    public Optional<Member> getMember(Long memberId){
-        return memberRepository.findById(memberId);
+    public Member getMember(Long memberId){
+        return memberRepository.findById(memberId)
+                .orElse(null);
     }
 }
