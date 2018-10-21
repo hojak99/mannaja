@@ -1,38 +1,51 @@
 package com.depromeet.mannaja.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@ToString
 @Entity
 @Table(name="plan", schema = "mannaja")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Plan{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "plan_year_month")
     private String planYearMonth;
 
     @Setter
+    @Column(name = "settle_date")
     private LocalDate settleDate;
 
+    @CreatedDate
+    @LastModifiedDate
+    @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "personalPlan",
-        joinColumns = @JoinColumn(name = "memberId"),
-        inverseJoinColumns = @JoinColumn(name = "planId"))
+    @JoinTable(name = "personal_plan",
+        joinColumns = @JoinColumn(name = "member_id"),
+        inverseJoinColumns = @JoinColumn(name = "plan_id"))
     private List<Member> memberList;
 
     public void addMember(Member member){

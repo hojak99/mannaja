@@ -7,6 +7,8 @@ import com.depromeet.mannaja.repository.CalendarRepository;
 import com.depromeet.mannaja.repository.PlanRepository;
 import com.depromeet.mannaja.service.PlanDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +27,10 @@ public class PlanFinder {
     @Autowired
     PlanRepository planRepository;
 
+    public Page<Plan> getPlanList(Pageable pageable) {
+        return planRepository.findAll(pageable);
+    }
+
     public Plan getPlan(Long planId){
         return planRepository.findById(planId).get();
     }
@@ -41,7 +47,7 @@ public class PlanFinder {
     }
 
     private Map<Member,List<LocalDate>> getMemberMap(Plan plan){
-        Map<Member,List<LocalDate>> dateMapByMemeber = new HashMap<>();
+        Map<Member,List<LocalDate>> dateMapByMember = new HashMap<>();
 
         for(Member member : plan.getMemberList()){
             Optional<Calendar> calendar = calendarRepository.findByMemberIdAndYearMonth(member.getId(),plan.getPlanYearMonth());
@@ -51,10 +57,10 @@ public class PlanFinder {
                         .filter(schedule -> !schedule.isScheduled())
                         .map((schedule -> YearMonth.parse(plan.getPlanYearMonth()).atDay(Integer.valueOf(schedule.getDate()))))
                         .collect(Collectors.toList());
-                dateMapByMemeber.put(member,localDates);
+                dateMapByMember.put(member,localDates);
             }
         }
-        return dateMapByMemeber;
+        return dateMapByMember;
     }
 
     private List<LocalDate> getValidDateList(Plan plan){
