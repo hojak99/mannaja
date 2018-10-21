@@ -63,7 +63,7 @@ public class PlanController {
         planRegister.create(createPlan);
     }
 
-    @GetMapping("/delete/{planId}")
+    @DeleteMapping("/delete/{planId}")
     public void deletePlan(@PathVariable Long planId) {
         planRemover.removePlan(planId);
     }
