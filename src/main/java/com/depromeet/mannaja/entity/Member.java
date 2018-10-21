@@ -1,7 +1,10 @@
 package com.depromeet.mannaja.entity;
 
+import com.depromeet.mannaja.controller.request.MemberRequest;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name="member", schema = "mannaja")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -28,9 +31,11 @@ public class Member {
     @Column(name = "name")
     private String name;
 
+    @LastModifiedDate
     @Column(name = "last_login")
     private LocalDateTime lastLogIn;
 
+    @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -44,4 +49,12 @@ public class Member {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private List<Calendar> calendarList;
+
+    public static Member create(MemberRequest request) {
+        Member member = new Member();
+        member.name = request.getName();
+        member.uuid = request.getUuid();
+
+        return member;
+    }
 }
