@@ -4,6 +4,7 @@ import com.depromeet.mannaja.entity.Calendar;
 import com.depromeet.mannaja.entity.Member;
 import com.depromeet.mannaja.entity.Plan;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,10 +22,12 @@ public class MemberResponse {
         response.id = member.getId();
         response.uuid = member.getUuid();
         response.name = member.getName();
-        response.calendarList = member.getCalendarList()
-                .stream()
-                .map(CalendarResponse::from)
-                .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(member.getCalendarList())) {
+            response.calendarList = member.getCalendarList()
+                    .stream()
+                    .map(CalendarResponse::from)
+                    .collect(Collectors.toList());
+        }
 
         return response;
     }
