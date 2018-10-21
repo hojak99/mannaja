@@ -1,6 +1,7 @@
 package com.depromeet.mannaja.controller;
 
 import com.depromeet.mannaja.controller.request.CreatePlan;
+import com.depromeet.mannaja.controller.resposne.PlanDetailResponse;
 import com.depromeet.mannaja.controller.resposne.PlanListResponse;
 import com.depromeet.mannaja.entity.Plan;
 import com.depromeet.mannaja.service.PlanDetail;
@@ -41,8 +42,8 @@ public class PlanController {
     }
 
     @GetMapping("/detail/{planId}")
-    public PlanDetail getPlanDetail(@PathVariable Long planId) {
-        return planFinder.findPlanDetail(planId);
+    public PlanDetailResponse getPlanDetail(@PathVariable Long planId) {
+        return PlanDetailResponse.from(planFinder.findPlanDetail(planId));
 
     }
 

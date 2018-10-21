@@ -7,18 +7,24 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class MemberResponse {
     private Long id;
     private String uuid;
     private String name;
+    private List<CalendarResponse> calendarList;
 
     public static MemberResponse from(Member member) {
         MemberResponse response = new MemberResponse();
         response.id = member.getId();
         response.uuid = member.getUuid();
         response.name = member.getName();
+        response.calendarList = member.getCalendarList()
+                .stream()
+                .map(CalendarResponse::from)
+                .collect(Collectors.toList());
 
         return response;
     }

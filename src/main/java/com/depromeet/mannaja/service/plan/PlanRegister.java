@@ -8,16 +8,15 @@ import com.depromeet.mannaja.entity.Schedule;
 import com.depromeet.mannaja.repository.CalendarRepository;
 import com.depromeet.mannaja.repository.PlanRepository;
 import com.depromeet.mannaja.service.member.MemberFinder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Service
 public class PlanRegister {
     @Autowired
@@ -33,12 +32,14 @@ public class PlanRegister {
         Plan plan = Plan.builder()
                 .name(createPlan.getName())
                 .planYearMonth(createPlan.getPlanDate())
-                .settleDate(LocalDate.parse(createPlan.getPlanDate()))
+                .memberList(new ArrayList<>())
                 .build();
-        plan.addMember(memberFinder.getMember(createPlan.getMemberId()).get());
-        updateSettleDate(plan);
 
-        return planRepository.save(plan);
+        plan.addMember(memberFinder.getMember(createPlan.getMemberId()));
+        plan = planRepository.save(plan);
+
+        log.info("[PlanRegister.create] success create plan : {}", plan);
+        return plan;
     }
 
     public Map<Long, Boolean> getDateBooleanMap(Plan plan){

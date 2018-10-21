@@ -2,17 +2,20 @@ package com.depromeet.mannaja.entity;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@ToString(exclude = {"planList", "calendarList"})
 @Entity
 @Table(name="member", schema = "mannaja")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

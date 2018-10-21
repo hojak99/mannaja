@@ -31,11 +31,11 @@ public class PlanFinder {
         return planRepository.findAll(pageable);
     }
 
-    public Plan getPlan(Long planId){
+    public Plan getPlan(Long planId) {
         return planRepository.findById(planId).get();
     }
 
-    public PlanDetail findPlanDetail(Long planId){
+    public PlanDetail findPlanDetail(Long planId) {
         Plan plan = getPlan(planId);
         PlanDetail planDetail = PlanDetail.builder()
                 .plan(plan)
@@ -46,32 +46,35 @@ public class PlanFinder {
         return planDetail;
     }
 
-    private Map<Member,List<LocalDate>> getMemberMap(Plan plan){
-        Map<Member,List<LocalDate>> dateMapByMember = new HashMap<>();
+    private Map<Member, List<LocalDate>> getMemberMap(Plan plan) {
+        Map<Member, List<LocalDate>> dateMapByMember = new HashMap<>();
 
-        for(Member member : plan.getMemberList()){
-            Optional<Calendar> calendar = calendarRepository.findByMemberIdAndYearMonth(member.getId(),plan.getPlanYearMonth());
-            if(calendar.isPresent()){
+        for (Member member : plan.getMemberList()) {
+            Optional<Calendar> calendar = calendarRepository.findByMemberIdAndYearMonth(member.getId(), plan.getPlanYearMonth());
+            if (calendar.isPresent()) {
                 List<LocalDate> localDates = calendar.get().getScheduleList()
                         .stream()
                         .filter(schedule -> !schedule.isScheduled())
                         .map((schedule -> YearMonth.parse(plan.getPlanYearMonth()).atDay(Integer.valueOf(schedule.getDate()))))
                         .collect(Collectors.toList());
-                dateMapByMember.put(member,localDates);
+                dateMapByMember.put(member, localDates);
             }
         }
         return dateMapByMember;
     }
 
-    private List<LocalDate> getValidDateList(Plan plan){
+    private List<LocalDate> getValidDateList(Plan plan) {
         List<LocalDate> validDateList = new ArrayList<>();
 
         Map<Long, Boolean> dateBooleanMap = planRegister.getDateBooleanMap(plan);
 
         LocalDate startDate = YearMonth.parse(plan.getPlanYearMonth()).atDay(1);
         LocalDate endDate = startDate.plusMonths(1);
-        while(!startDate.isAfter(endDate)){
-            if(dateBooleanMap.containsKey(startDate.getDayOfMonth())){
+
+        while (!startDate.isAfter(endDate)) {
+            Long day = Long.parseLong(String.format("%02d", startDate.getDayOfMonth()));
+
+            if (dateBooleanMap.get(day) != null) {
                 validDateList.add(startDate);
             }
             startDate = startDate.plusDays(1);
