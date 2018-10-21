@@ -23,6 +23,9 @@ repositories {
     mavenCentral()
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4'
+}
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-aop')
