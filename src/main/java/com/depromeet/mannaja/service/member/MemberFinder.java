@@ -16,4 +16,9 @@ public class MemberFinder {
         return memberRepository.findById(memberId)
                 .orElse(new Member());
     }
+
+    public Member getMemberByUuid(String uuid) {
+        return memberRepository.findByUuid(uuid)
+                .orElse(new Member());
+    }
 }

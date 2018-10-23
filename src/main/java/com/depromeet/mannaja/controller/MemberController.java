@@ -22,7 +22,7 @@ public class MemberController{
     private MemberRegister memberRegister;
 
     @GetMapping("/{memberId}")
-    public MemberResponse getMember(@PathVariable Long memberId){
+    public MemberResponse getMember(@PathVariable(value = "memberId") Long memberId){
         Member member = memberFinder.getMember(memberId);
 
         return MemberResponse.from(member);
@@ -31,5 +31,11 @@ public class MemberController{
     @PostMapping("/")
     public void createMember(@RequestBody MemberRequest request) {
         memberRegister.createMember(request);
+    }
+
+    @GetMapping("/uuid/{uuid}")
+    public MemberResponse getMemberByUuid(@PathVariable(value = "uuid") String uuid) {
+        Member member = memberFinder.getMemberByUuid(uuid);
+        return MemberResponse.from(member);
     }
 }
