@@ -6,6 +6,7 @@ import com.depromeet.mannaja.entity.Plan;
 import com.depromeet.mannaja.repository.CalendarRepository;
 import com.depromeet.mannaja.repository.PlanRepository;
 import com.depromeet.mannaja.service.PlanDetail;
+import com.depromeet.mannaja.service.member.MemberFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,11 @@ public class PlanFinder {
     @Autowired
     PlanRepository planRepository;
 
-    public Page<Plan> getPlanList(Pageable pageable) {
-        return planRepository.findAll(pageable);
+    @Autowired
+    MemberFinder memberFinder;
+
+    public Member getPlanList(Long memberId) {
+        return memberFinder.getMember(memberId);
     }
 
     public Plan getPlan(Long planId) {
