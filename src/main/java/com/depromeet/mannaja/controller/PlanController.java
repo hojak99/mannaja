@@ -42,12 +42,14 @@ public class PlanController {
         return PlanListResponse.from(planFinder.getPlanList(memberId));
     }
 
+    @ApiOperation(value = "약속 상세정보", notes = "약속 상세 정보")
     @GetMapping("/detail/{planId}")
     public PlanDetailResponse getPlanDetail(@PathVariable Long planId) {
         return PlanDetailResponse.from(planFinder.findPlanDetail(planId));
 
     }
 
+    @ApiOperation(value = "약속 날짜 정하기", notes = "약속 날짜 정하는 api. settleDate 는 yyyy-MM-dd 입니다.")
     @PatchMapping("/")
     public void setPlanSettleDate(
             @RequestBody PlanRequest request) {

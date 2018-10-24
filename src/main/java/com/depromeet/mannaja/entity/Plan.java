@@ -44,8 +44,8 @@ public class Plan{
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "personal_plan",
-        joinColumns = @JoinColumn(name = "member_id"),
-        inverseJoinColumns = @JoinColumn(name = "plan_id"))
+        joinColumns = @JoinColumn(name = "plan_id"),
+        inverseJoinColumns = @JoinColumn(name = "member_id"))
     private List<Member> memberList;
 
     public void addMember(Member member){
@@ -60,7 +60,5 @@ public class Plan{
                 break;
             }
         }
-
-
     }
 }
