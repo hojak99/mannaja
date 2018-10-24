@@ -1,5 +1,6 @@
 package com.depromeet.mannaja.controller.resposne;
 
+import com.depromeet.mannaja.entity.Member;
 import com.depromeet.mannaja.entity.Plan;
 import lombok.Data;
 
@@ -10,21 +11,28 @@ import java.util.stream.Collectors;
 @Data
 public class PlanListResponse {
     private Long id;
+    private String uuid;
     private String name;
-    private String planYearMonth;
-    private LocalDate settleDate;
-    private List<MemberResponse> memberResponseList;
+    private List<PlanResponse> planList;
 
-    public static PlanListResponse from(Plan plan) {
+    public static PlanListResponse from(Member member) {
         PlanListResponse planListResponse = new PlanListResponse();
-        planListResponse.id = plan.getId();
-        planListResponse.name = plan.getName();
-        planListResponse.planYearMonth = plan.getPlanYearMonth();
-        planListResponse.settleDate = plan.getSettleDate();
-        planListResponse.memberResponseList = plan.getMemberList()
+        planListResponse.id = member.getId();
+        planListResponse.name = member.getName();
+        planListResponse.planList = member.getPlanList()
                 .stream()
-                .map(MemberResponse::from)
+                .map(PlanResponse::from)
                 .collect(Collectors.toList());
+
+        for(PlanResponse planResponse : planListResponse.planList) {
+            for(int i = 0; i <planResponse.getMemberList().size(); ++i) {
+                MemberResponse memberResponse = planResponse.getMemberList().get(i);
+
+                if(planListResponse.id.equals(memberResponse.getId())){
+                    planResponse.getMemberList().remove(i);
+                }
+            }
+        }
 
         return planListResponse;
     }

@@ -13,7 +13,7 @@ public class PlanDetailResponse {
 
     private PlanResponse plan;
     private List<LocalDate> allValidDateList;
-    private Map<MemberResponse, List<LocalDate>> dateMapByMemberId;
+//    private Map<MemberResponse, List<LocalDate>> dateMapByMemberId;
 
     public static PlanDetailResponse from(PlanDetail planDetail) {
         PlanDetailResponse response = new PlanDetailResponse();

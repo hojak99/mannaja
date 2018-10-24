@@ -10,6 +10,7 @@ import com.depromeet.mannaja.service.plan.PlanFinder;
 import com.depromeet.mannaja.service.plan.PlanModifier;
 import com.depromeet.mannaja.service.plan.PlanRegister;
 import com.depromeet.mannaja.service.plan.PlanRemover;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,15 +36,10 @@ public class PlanController {
     @Autowired
     private PlanModifier planModifier;
 
-    @GetMapping("/{planId}")
-    public Plan getPlan(@PathVariable Long planId) {
-        return planFinder.getPlan(planId);
-    }
-
-    @GetMapping("/")
-    public Page<PlanListResponse> getPlanList(@PageableDefault Pageable pageable) {
-        return planFinder.getPlanList(pageable)
-                .map(PlanListResponse::from);
+    @GetMapping("/{memberId}")
+    public PlanListResponse getPlanList(
+            @PathVariable(value = "memberId") Long memberId) {
+        return PlanListResponse.from(planFinder.getPlanList(memberId));
     }
 
     @GetMapping("/detail/{planId}")
@@ -58,8 +54,14 @@ public class PlanController {
         planModifier.setSettleDate(request);
     }
 
+    @ApiOperation(value = "약속 생성하기", notes = "약속 생성하는 api. plateDate 는 yyyy-MM 으로 보내셔야 합니다." +
+            "planDate 가 무슨 달에 약속 잡을지! 이거고 settleDate 가 yyyy-MM-dd 로 약속 잡은 날짜! 입니다")
     @PostMapping("/create")
     public void createPlan(@Valid @RequestBody CreatePlan createPlan) {
+        if(createPlan.getPlanDate().length() != 7) {
+            throw new IllegalArgumentException("plateDate must be yyyy-MM");
+        }
+
         planRegister.create(createPlan);
     }
 
