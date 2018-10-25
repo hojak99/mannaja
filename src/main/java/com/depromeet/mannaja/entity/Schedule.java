@@ -50,7 +50,7 @@ public class Schedule {
     public static Schedule create(ScheduleRequest request){
         Schedule schedule = new Schedule();
         schedule.calendarId = request.getCalendarId();
-        schedule.date = String.valueOf(request.getScheduleDate().getDayOfMonth());
+        schedule.date = String.format("%02d", request.getScheduleDate().getDayOfMonth());
 
         return schedule;
     }
