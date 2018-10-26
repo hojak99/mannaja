@@ -41,6 +41,10 @@ public class PlanFinder {
 
     public PlanDetail findPlanDetail(Long planId) {
         Plan plan = getPlan(planId);
+        return getPlanDetail(plan);
+    }
+
+    public PlanDetail getPlanDetail(Plan plan) {
         PlanDetail planDetail = PlanDetail.builder()
                 .plan(plan)
                 .allValidDate(getValidDateList(plan))
@@ -84,5 +88,14 @@ public class PlanFinder {
             startDate = startDate.plusDays(1);
         }
         return validDateList;
+    }
+
+    public Plan findByInvitationUrl(String invitationUrl){
+        Optional<Plan> plan = planRepository.findByInvitationUrl(invitationUrl);
+        if(plan.isPresent()){
+            return plan.get();
+        }else{
+            throw new IllegalArgumentException("잘못된 url 입니다");
+        }
     }
 }

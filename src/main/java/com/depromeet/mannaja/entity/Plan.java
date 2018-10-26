@@ -8,8 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +45,9 @@ public class Plan{
         joinColumns = @JoinColumn(name = "plan_id"),
         inverseJoinColumns = @JoinColumn(name = "member_id"))
     private List<Member> memberList;
+
+    @Column(name = "invitation_url")
+    private String invitationUrl;
 
     public void addMember(Member member){
         memberList.add(member);
