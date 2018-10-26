@@ -4,6 +4,7 @@ import com.depromeet.mannaja.controller.request.CreatePlan;
 import com.depromeet.mannaja.controller.request.PlanRequest;
 import com.depromeet.mannaja.controller.resposne.PlanDetailResponse;
 import com.depromeet.mannaja.controller.resposne.PlanListResponse;
+import com.depromeet.mannaja.entity.Member;
 import com.depromeet.mannaja.entity.Plan;
 import com.depromeet.mannaja.service.PlanDetail;
 import com.depromeet.mannaja.service.plan.PlanFinder;
@@ -75,5 +76,12 @@ public class PlanController {
     @PostMapping("/leave/{planId}/{memberId}")
     public void leavePlan(@PathVariable Long planId, @PathVariable Long memberId) {
         planRemover.leavePlan(planId, memberId);
+    }
+
+    @ApiOperation(value = "새로운멤버조인", notes = "새로운 멤버가 url을 통해 plan에 조인 할 때 사용하는 api 입니다.")
+    @PostMapping("/join/plan/{invitationUrl}")
+    public PlanDetailResponse addMember(@PathVariable String invitationUrl,
+                          @RequestBody Member member){
+        return PlanDetailResponse.from(planModifier.addMember(invitationUrl,member));
     }
 }

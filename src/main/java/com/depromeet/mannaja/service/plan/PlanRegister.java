@@ -8,6 +8,7 @@ import com.depromeet.mannaja.entity.Schedule;
 import com.depromeet.mannaja.repository.CalendarRepository;
 import com.depromeet.mannaja.repository.PlanRepository;
 import com.depromeet.mannaja.service.member.MemberFinder;
+import com.depromeet.mannaja.utils.RandStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,12 @@ public class PlanRegister {
     CalendarRepository calendarRepository;
 
     public Plan create(CreatePlan createPlan){
+        String url = RandStringUtils.generateRandomString();
         Plan plan = Plan.builder()
                 .name(createPlan.getName())
                 .planYearMonth(createPlan.getPlanDate())
                 .memberList(new ArrayList<>())
+                .invitationUrl(url)
                 .build();
 
         plan.addMember(memberFinder.getMember(createPlan.getMemberId()));
@@ -56,7 +59,6 @@ public class PlanRegister {
                         .forEach(schedule -> dateBooleanMap.put(Long.parseLong(schedule.getDate()),true));
             }
         }
-
         return dateBooleanMap;
     }
 
