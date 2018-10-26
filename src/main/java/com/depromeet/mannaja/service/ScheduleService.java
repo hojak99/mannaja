@@ -58,13 +58,14 @@ public class ScheduleService {
                 .orElseThrow(() -> new IllegalArgumentException("no schedule data. day: " + dayList));
     }
 
-    public void updateIsScheduled(Long memberId, List<LocalDate> date) {
+    public List<Schedule> updateIsScheduled(Long memberId, List<LocalDate> date) {
         List<Schedule> scheduleList = checkExistScheduleData(memberId, date);
 
         scheduleList.stream().forEach(schedule -> schedule.changeIsScheduled());
         scheduleList = scheduleRepository.saveAll(scheduleList);
 
         log.info("[ScheduleService.updateIsScheduled] Success change schedule : {}", scheduleList);
+        return scheduleList;
     }
 
     private List<Schedule> checkExistScheduleData(Long memberId, List<LocalDate> dateList) {
