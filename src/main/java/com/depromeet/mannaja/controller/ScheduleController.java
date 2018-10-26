@@ -27,14 +27,16 @@ public class ScheduleController {
     @ApiOperation(value = "자신의 스케줄 상태 변경", notes = "자신의 스케줄에서 약속 유무 설정. " +
             "`date` 에는 `yyyy-MM-dd` 형태. 스케줄 정보가 없을 시 스케줄 생성 후 상태 값 변경을 자동으로 차리")
     @PatchMapping("/schedule/{memberId}")
-    public void patchSchedule(
+    public List<ScheduleResponse> patchSchedule(
             @PathVariable(name = "memberId") Long memberId,
             @RequestBody List<ScheduleRequest> scheduleRequestList) {
 
-        scheduleService.updateIsScheduled(memberId,
+        return scheduleService.updateIsScheduled(memberId,
                 scheduleRequestList
                         .stream()
-                        .map(request -> request.getScheduleDate()).collect(Collectors.toList()));
+                        .map(request -> request.getScheduleDate()).collect(Collectors.toList()))
+                            .stream()
+                            .map(schedule -> ScheduleResponse.from(schedule.getCalendar().getYearMonth(), schedule)).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "자신의 특정 스케줄 조회", notes = "자신의 특정 스케줄을 조회함. `data` 는 `yyyy-MM-dd` 형태. 스케줄 존재하지 않을 시 exception 뱉음.")
